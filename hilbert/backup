@@ -1,0 +1,63 @@
+//    public void mousePressed() {
+//        if (upper_bover) {
+//            upper_locked = true;
+//        } else {
+//            upper_locked = false;
+//        }
+//
+//        if (lower_bover) {
+//            lower_locked = true;
+//        } else {
+//            lower_locked = false;
+//        }
+//    }
+//
+//    public void mouseDragged() {
+//        if (upper_locked) {
+//            upper_threshold_Y = mouseY;
+//            if (upper_threshold_Y >= height / 2) {
+//                upper_threshold_Y = height / 2;
+//            }
+//            if (upper_threshold_Y <= upper_limit) {
+//                upper_threshold_Y = upper_limit;
+//            }
+//        }
+//
+//
+//        if (lower_locked) {
+//            lower_threshold_Y = mouseY;
+//            if (lower_threshold_Y <= height / 2) {
+//                lower_threshold_Y = height / 2;
+//            }
+//            if (lower_threshold_Y >= lower_limit) {
+//                lower_threshold_Y = lower_limit;
+//            }
+//        }
+//    }
+
+
+
+//            //threshold action listeners
+//            if (mouseY >= upper_threshold_Y - 10 && mouseY <= upper_threshold_Y) {
+//                cursor(HAND);
+//                upper_bover = true;
+//            } else {
+//                if (!(mouseY >= lower_threshold_Y && mouseY <= lower_threshold_Y + 10)) {
+//                    cursor(ARROW);
+//                    upper_bover = false;
+//                }
+//            }
+//
+//            if (mouseY >= lower_threshold_Y && mouseY <= lower_threshold_Y + 10) {
+//                cursor(HAND);
+//                lower_bover = true;
+//            } else {
+//                if (!(mouseY >= upper_threshold_Y - 10 && mouseY <= upper_threshold_Y)) {
+//                    cursor(ARROW);
+//                    lower_bover = false;
+//                }
+//            }
+//    public void mouseReleased() {
+//        upper_locked = false;
+//        lower_locked = false;
+//    }

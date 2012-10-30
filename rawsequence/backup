@@ -1,0 +1,567 @@
+    /*
+     * This method initially countes the lines of the files
+     * Then we give the number of lines and it  creates a file with 3 columns summarizing the values
+     * The column starts with the first read of the bucket and the average read depth of the bucket
+     * The first column contains the max and the min of the averages of the bucket
+     * If the lines of the file are few then we create a copy of the file
+     */
+    public static void average_File(String filename, int lines_of_bucket) {
+
+        int file_counter = 1;
+        int entity_counter = 1;
+        ArrayList<Double> average_sample_depth_of_bucket = new ArrayList();
+        ArrayList<Double> average_reference_depth_of_bucket = new ArrayList();
+        ArrayList<Double> average_ratio_of_bucket = new ArrayList();
+        boolean file_bigger_than_given_length = false;
+
+
+        int columns = get_number_of_columns(filename);
+
+        ArrayList<String> headers = get_headers(filename);
+
+        if (!filename.endsWith(".txt")) {
+            filename += ".txt";
+        }
+
+        StringBuffer str_buf2 = new StringBuffer();
+
+        int liness = GenericMethods.get_lines_of_file(filename) - 1;
+
+        if (liness > lines_of_bucket) {
+            file_bigger_than_given_length = true;
+        }
+
+        buckets = liness / lines_of_bucket + 1;
+        if (liness == lines_of_bucket) {
+            buckets = 1;
+        }
+
+
+
+        System.out.println("lines of the initial file: " + liness);
+        System.out.println("buckets created: " + (int) Math.ceil((float) liness / (float) lines_of_bucket));
+        System.out.println("records per bucket: " + (lines_of_bucket));
+        System.out.println("");
+
+
+        //System.out.println(file_bigger_than_given_length + "\t" + liness + "\t" + lines_of_bucket+"\t"+buckets);
+
+        //if the file is small enough copy it and process it immediately {
+        int lin = 0;
+        if (file_bigger_than_given_length == false) {
+            try {
+                //System.out.println("lines of bucket= " + lines_of_bucket);
+                StringBuffer sss = new StringBuffer();
+                FileInputStream fstream3 = new FileInputStream(filename);
+                DataInputStream in3 = new DataInputStream(fstream3);
+                BufferedReader br3 = new BufferedReader(new InputStreamReader(in3));
+                String strLine3;
+
+                for (int i = 0; i < headers.size() - 1; i++) {
+                    sss.append(headers.get(i) + "\t");
+                }
+                sss.append(headers.get(headers.size() - 1) + "\n");
+
+                while ((strLine3 = br3.readLine()) != null) {
+                    if (strLine3.trim().length() != 0) {
+                        if (lin != 0) {
+                            sss.append(strLine3 + "\n");
+                        }
+                    }
+                    lin++;
+                }
+                in3.close();
+                String filename_2 = filename.replace(".txt", "_averages.txt");
+//                System.out.println("Created:" + filename_2 + " /" + buckets);
+                GenericMethods.write_file(sss, filename_2);
+
+            } catch (Exception e) {//Catch exception if any
+                e.printStackTrace();
+            }
+        }//if file_bigger_than_hilbert_length==false
+
+
+
+        //-------------------------- So far so good.... -----------------------------------
+
+
+        if (file_bigger_than_given_length == true) {
+            lin = 0;
+
+            for (int i = 0; i < headers.size() - 1; i++) {
+                str_buf.append(headers.get(i) + "\t");
+            }
+            str_buf.append(headers.get(headers.size() - 1) + "\n");
+
+            try {
+                FileInputStream fstream = new FileInputStream(filename);
+                DataInputStream in = new DataInputStream(fstream);
+                BufferedReader br = new BufferedReader(new InputStreamReader(in));
+                String strLine;
+                double avg_sample = 0;
+                double avg_reference = 0;
+                double avg_ratio = 0;
+                while ((strLine = br.readLine()) != null) {
+                    if (strLine.trim().length() != 0) {
+                        if (lin != 0) {
+                            //System.out.println(strLine);
+                            String[] str = strLine.split("\t");
+                            readIDs.add(str[0]);
+
+
+                            if (columns == 2) {
+                                if (headers.get(1).compareToIgnoreCase("sample") == 0) {
+                                    read_depth_sample.add(Double.parseDouble(str[1]));
+                                }
+                                if (headers.get(1).compareToIgnoreCase("reference") == 0) {
+                                    read_depth_reference.add(Double.parseDouble(str[1]));
+                                }
+                                if (headers.get(1).compareToIgnoreCase("ratio") == 0) {
+                                    read_depth_ratio.add(Double.parseDouble(str[1]));
+                                }
+                            }
+
+                            if (columns == 3) {
+                                if (headers.get(1).compareToIgnoreCase("sample") == 0) {
+                                    read_depth_sample.add(Double.parseDouble(str[1]));
+                                }
+                                if (headers.get(1).compareToIgnoreCase("reference") == 0) {
+                                    read_depth_reference.add(Double.parseDouble(str[1]));
+                                }
+                                if (headers.get(1).compareToIgnoreCase("ratio") == 0) {
+                                    read_depth_ratio.add(Double.parseDouble(str[1]));
+                                }
+
+                                if (headers.get(2).compareToIgnoreCase("sample") == 0) {
+                                    read_depth_sample.add(Double.parseDouble(str[2]));
+                                }
+                                if (headers.get(2).compareToIgnoreCase("reference") == 0) {
+                                    read_depth_reference.add(Double.parseDouble(str[2]));
+                                }
+                                if (headers.get(2).compareToIgnoreCase("ratio") == 0) {
+                                    read_depth_ratio.add(Double.parseDouble(str[2]));
+                                }
+                            }
+
+                            if (columns == 4) {
+                                if (headers.get(1).compareToIgnoreCase("sample") == 0) {
+                                    read_depth_sample.add(Double.parseDouble(str[1]));
+                                }
+                                if (headers.get(1).compareToIgnoreCase("reference") == 0) {
+                                    read_depth_reference.add(Double.parseDouble(str[1]));
+                                }
+                                if (headers.get(1).compareToIgnoreCase("ratio") == 0) {
+                                    read_depth_ratio.add(Double.parseDouble(str[1]));
+                                }
+
+                                if (headers.get(2).compareToIgnoreCase("sample") == 0) {
+                                    read_depth_sample.add(Double.parseDouble(str[2]));
+                                }
+                                if (headers.get(2).compareToIgnoreCase("reference") == 0) {
+                                    read_depth_reference.add(Double.parseDouble(str[2]));
+                                }
+                                if (headers.get(2).compareToIgnoreCase("ratio") == 0) {
+                                    read_depth_ratio.add(Double.parseDouble(str[2]));
+                                }
+
+                                if (headers.get(3).compareToIgnoreCase("sample") == 0) {
+                                    read_depth_sample.add(Double.parseDouble(str[3]));
+                                }
+                                if (headers.get(3).compareToIgnoreCase("reference") == 0) {
+                                    read_depth_reference.add(Double.parseDouble(str[3]));
+                                }
+                                if (headers.get(3).compareToIgnoreCase("ratio") == 0) {
+                                    read_depth_ratio.add(Double.parseDouble(str[3]));
+                                }
+                            }
+
+                            if (readIDs.size() >= lines_of_bucket) {
+                                avg_sample = 0;
+                                avg_reference = 0;
+                                for (int i = 0; i < readIDs.size(); i++) {
+                                    // System.out.println(readIDs.get(i) + "\t" + read_depth.get(i) + "\n");
+                                    if (columns == 2) {
+
+
+                                        if (headers.get(1).compareToIgnoreCase("sample") == 0) {
+                                            avg_sample += read_depth_sample.get(i);
+                                        }
+                                        if (headers.get(1).compareToIgnoreCase("reference") == 0) {
+                                            avg_reference += read_depth_reference.get(i);
+                                        }
+                                        if (headers.get(1).compareToIgnoreCase("ratio") == 0) {
+                                            avg_ratio += read_depth_ratio.get(i);
+                                        }
+
+                                    }
+                                    if (columns == 3) {
+                                        if (headers.get(1).compareToIgnoreCase("sample") == 0) {
+                                            avg_sample += read_depth_sample.get(i);
+                                        }
+                                        if (headers.get(1).compareToIgnoreCase("reference") == 0) {
+                                            avg_reference += read_depth_reference.get(i);
+                                        }
+                                        if (headers.get(1).compareToIgnoreCase("ratio") == 0) {
+                                            avg_ratio += read_depth_ratio.get(i);
+                                        }
+
+                                        if (headers.get(2).compareToIgnoreCase("sample") == 0) {
+                                            avg_sample += read_depth_sample.get(i);
+                                        }
+                                        if (headers.get(2).compareToIgnoreCase("reference") == 0) {
+                                            avg_reference += read_depth_reference.get(i);
+                                        }
+                                        if (headers.get(2).compareToIgnoreCase("ratio") == 0) {
+                                            avg_ratio += read_depth_ratio.get(i);
+                                        }
+
+                                    }
+
+                                    if (columns == 4) {
+                                        if (headers.get(1).compareToIgnoreCase("sample") == 0) {
+                                            avg_sample += read_depth_sample.get(i);
+                                        }
+                                        if (headers.get(1).compareToIgnoreCase("reference") == 0) {
+                                            avg_reference += read_depth_reference.get(i);
+                                        }
+                                        if (headers.get(1).compareToIgnoreCase("ratio") == 0) {
+                                            avg_ratio += read_depth_ratio.get(i);
+                                        }
+
+                                        if (headers.get(2).compareToIgnoreCase("sample") == 0) {
+                                            avg_sample += read_depth_sample.get(i);
+                                        }
+                                        if (headers.get(2).compareToIgnoreCase("reference") == 0) {
+                                            avg_reference += read_depth_reference.get(i);
+                                        }
+                                        if (headers.get(2).compareToIgnoreCase("ratio") == 0) {
+                                            avg_ratio += read_depth_ratio.get(i);
+                                        }
+
+                                        if (headers.get(3).compareToIgnoreCase("sample") == 0) {
+                                            avg_sample += read_depth_sample.get(i);
+                                        }
+                                        if (headers.get(3).compareToIgnoreCase("reference") == 0) {
+                                            avg_reference += read_depth_reference.get(i);
+                                        }
+                                        if (headers.get(3).compareToIgnoreCase("ratio") == 0) {
+                                            avg_ratio += read_depth_ratio.get(i);
+                                        }
+
+                                    }
+                                }
+                                //System.out.println(avg+"-"+readIDs.size());
+
+                                if (columns == 2) {
+                                    double tmp = -99999;
+                                    if (headers.get(1).compareToIgnoreCase("sample") == 0) {
+                                        average_sample_depth_of_bucket.add(Math.ceil(avg_sample / readIDs.size()));
+                                        tmp = average_sample_depth_of_bucket.get(average_sample_depth_of_bucket.size() - 1);
+                                    }
+                                    if (headers.get(1).compareToIgnoreCase("reference") == 0) {
+                                        average_reference_depth_of_bucket.add(Math.ceil(avg_reference / readIDs.size()));
+                                        tmp = average_reference_depth_of_bucket.get(average_reference_depth_of_bucket.size() - 1);
+                                    }
+                                    if (headers.get(1).compareToIgnoreCase("ratio") == 0) {
+                                        average_ratio_of_bucket.add(Math.ceil(avg_ratio / readIDs.size()));
+                                        tmp = average_ratio_of_bucket.get(average_ratio_of_bucket.size() - 1);
+                                    }
+                                    str_buf.append(readIDs.get(0) + "\t" + (tmp) + "\n");
+
+
+                                }
+
+                                if (columns == 3) {
+                                    double tmp1 = -99999;
+                                    double tmp2 = -99999;
+                                    if (headers.get(1).compareToIgnoreCase("sample") == 0) {
+                                        average_sample_depth_of_bucket.add(Math.ceil(avg_sample / readIDs.size()));
+                                        tmp1 = average_sample_depth_of_bucket.get(average_sample_depth_of_bucket.size() - 1);
+                                    }
+                                    if (headers.get(1).compareToIgnoreCase("reference") == 0) {
+                                        average_reference_depth_of_bucket.add(Math.ceil(avg_reference / readIDs.size()));
+                                        tmp1 = average_reference_depth_of_bucket.get(average_reference_depth_of_bucket.size() - 1);
+
+                                    }
+                                    if (headers.get(1).compareToIgnoreCase("ratio") == 0) {
+                                        average_ratio_of_bucket.add(Math.ceil(avg_ratio / readIDs.size()));
+                                        tmp2 = average_ratio_of_bucket.get(average_ratio_of_bucket.size() - 1);
+                                    }
+
+                                    if (headers.get(2).compareToIgnoreCase("sample") == 0) {
+                                        average_sample_depth_of_bucket.add(Math.ceil(avg_sample / readIDs.size()));
+                                        tmp2 = average_sample_depth_of_bucket.get(average_sample_depth_of_bucket.size() - 1);
+                                    }
+                                    if (headers.get(2).compareToIgnoreCase("reference") == 0) {
+                                        average_reference_depth_of_bucket.add(Math.ceil(avg_reference / readIDs.size()));
+                                        tmp2 = average_reference_depth_of_bucket.get(average_reference_depth_of_bucket.size() - 1);
+
+                                    }
+                                    if (headers.get(2).compareToIgnoreCase("ratio") == 0) {
+                                        average_ratio_of_bucket.add(Math.ceil(avg_ratio / readIDs.size()));
+                                        tmp2 = average_ratio_of_bucket.get(average_ratio_of_bucket.size() - 1);
+                                    }
+                                    str_buf.append(readIDs.get(0) + "\t" + (tmp1) + "\t" + tmp2 + "\n");
+
+                                }
+
+
+                                if (columns == 4) {
+                                    double tmp1 = -99999;
+                                    double tmp2 = -99999;
+                                    double tmp3 = -99999;
+                                    if (headers.get(1).compareToIgnoreCase("sample") == 0) {
+                                        average_sample_depth_of_bucket.add(Math.ceil(avg_sample / readIDs.size()));
+                                        tmp1 = average_sample_depth_of_bucket.get(average_sample_depth_of_bucket.size() - 1);
+                                    }
+                                    if (headers.get(1).compareToIgnoreCase("reference") == 0) {
+                                        average_reference_depth_of_bucket.add(Math.ceil(avg_reference / readIDs.size()));
+                                        tmp1 = average_reference_depth_of_bucket.get(average_reference_depth_of_bucket.size() - 1);
+
+                                    }
+                                    if (headers.get(1).compareToIgnoreCase("ratio") == 0) {
+                                        average_ratio_of_bucket.add(Math.ceil(avg_ratio / readIDs.size()));
+                                        tmp2 = average_ratio_of_bucket.get(average_ratio_of_bucket.size() - 1);
+                                    }
+
+                                    if (headers.get(2).compareToIgnoreCase("sample") == 0) {
+                                        average_sample_depth_of_bucket.add(Math.ceil(avg_sample / readIDs.size()));
+                                        tmp2 = average_sample_depth_of_bucket.get(average_sample_depth_of_bucket.size() - 1);
+                                    }
+                                    if (headers.get(2).compareToIgnoreCase("reference") == 0) {
+                                        average_reference_depth_of_bucket.add(Math.ceil(avg_reference / readIDs.size()));
+                                        tmp2 = average_reference_depth_of_bucket.get(average_reference_depth_of_bucket.size() - 1);
+
+                                    }
+                                    if (headers.get(2).compareToIgnoreCase("ratio") == 0) {
+                                        average_ratio_of_bucket.add(Math.ceil(avg_ratio / readIDs.size()));
+                                        tmp2 = average_ratio_of_bucket.get(average_ratio_of_bucket.size() - 1);
+                                    }
+
+                                    if (headers.get(3).compareToIgnoreCase("sample") == 0) {
+                                        average_sample_depth_of_bucket.add(Math.ceil(avg_sample / readIDs.size()));
+                                        tmp3 = average_sample_depth_of_bucket.get(average_sample_depth_of_bucket.size() - 1);
+                                    }
+                                    if (headers.get(3).compareToIgnoreCase("reference") == 0) {
+                                        average_reference_depth_of_bucket.add(Math.ceil(avg_reference / readIDs.size()));
+                                        tmp3 = average_reference_depth_of_bucket.get(average_reference_depth_of_bucket.size() - 1);
+
+                                    }
+                                    if (headers.get(3).compareToIgnoreCase("ratio") == 0) {
+                                        average_ratio_of_bucket.add(Math.ceil(avg_ratio / readIDs.size()));
+                                        tmp3 = average_ratio_of_bucket.get(average_ratio_of_bucket.size() - 1);
+                                    }
+                                    str_buf.append(readIDs.get(0) + "\t" + (tmp1) + "\t" + tmp2 + "\t" + tmp3 + "\n");
+
+                                }
+
+
+                                file_counter++;
+                                read_depth_sample.clear();
+                                read_depth_reference.clear();
+                                readIDs.clear();
+                            }
+                            //System.out.println("fc:"+file_counter);
+
+
+                            if (read_depth_sample.size() > 0 && file_counter == buckets) {
+
+                                avg_sample = 0;
+                                avg_reference = 0;
+
+                                if (columns == 2) {
+                                    double tmp = -99999;
+                                    for (int i = 0; i < readIDs.size(); i++) {
+
+                                        if (headers.get(1).compareToIgnoreCase("sample") == 0) {
+                                            avg_sample += read_depth_sample.get(i);
+                                        }
+                                        if (headers.get(1).compareToIgnoreCase("reference") == 0) {
+                                            avg_reference += read_depth_reference.get(i);
+                                        }
+                                        if (headers.get(1).compareToIgnoreCase("ratio") == 0) {
+                                            avg_ratio += read_depth_ratio.get(i);
+                                        }
+                                        str_buf2.setLength(0);
+                                    }
+
+
+                                    if (headers.get(1).compareToIgnoreCase("sample") == 0) {
+                                        average_sample_depth_of_bucket.add(Math.ceil(avg_sample / readIDs.size()));
+                                        tmp = average_sample_depth_of_bucket.get(average_sample_depth_of_bucket.size() - 1);
+                                    }
+                                    if (headers.get(1).compareToIgnoreCase("reference") == 0) {
+                                        average_reference_depth_of_bucket.add(Math.ceil(avg_reference / readIDs.size()));
+                                        tmp = average_reference_depth_of_bucket.get(average_reference_depth_of_bucket.size() - 1);
+                                    }
+                                    if (headers.get(1).compareToIgnoreCase("ratio") == 0) {
+                                        average_ratio_of_bucket.add(Math.ceil(avg_ratio / readIDs.size()));
+                                        tmp = average_ratio_of_bucket.get(average_ratio_of_bucket.size() - 1);
+                                    }
+
+
+                                    str_buf2.append(readIDs.get(0) + "\t" + (tmp) + "\n");
+                                }
+
+
+                                if (columns == 3) {
+                                    double tmp1 = -99999;
+                                    double tmp2 = -99999;
+                                    for (int i = 0; i < readIDs.size(); i++) {
+
+                                        if (headers.get(1).compareToIgnoreCase("sample") == 0) {
+                                            avg_sample += read_depth_sample.get(i);
+                                        }
+                                        if (headers.get(1).compareToIgnoreCase("reference") == 0) {
+                                            avg_reference += read_depth_reference.get(i);
+                                        }
+                                        if (headers.get(1).compareToIgnoreCase("ratio") == 0) {
+                                            avg_ratio += read_depth_ratio.get(i);
+                                        }
+
+                                        if (headers.get(2).compareToIgnoreCase("sample") == 0) {
+                                            avg_sample += read_depth_sample.get(i);
+                                        }
+                                        if (headers.get(2).compareToIgnoreCase("reference") == 0) {
+                                            avg_reference += read_depth_reference.get(i);
+                                        }
+                                        if (headers.get(2).compareToIgnoreCase("ratio") == 0) {
+                                            avg_ratio += read_depth_ratio.get(i);
+                                        }
+                                        str_buf2.setLength(0);
+                                    }
+
+                                    if (headers.get(1).compareToIgnoreCase("sample") == 0) {
+                                        average_sample_depth_of_bucket.add(Math.ceil(avg_sample / readIDs.size()));
+                                        tmp1 = average_sample_depth_of_bucket.get(average_sample_depth_of_bucket.size() - 1);
+                                    }
+                                    if (headers.get(1).compareToIgnoreCase("reference") == 0) {
+                                        average_reference_depth_of_bucket.add(Math.ceil(avg_reference / readIDs.size()));
+                                        tmp1 = average_reference_depth_of_bucket.get(average_reference_depth_of_bucket.size() - 1);
+                                    }
+                                    if (headers.get(1).compareToIgnoreCase("ratio") == 0) {
+                                        average_ratio_of_bucket.add(Math.ceil(avg_ratio / readIDs.size()));
+                                        tmp1 = average_ratio_of_bucket.get(average_ratio_of_bucket.size() - 1);
+                                    }
+
+                                    if (headers.get(2).compareToIgnoreCase("sample") == 0) {
+                                        average_sample_depth_of_bucket.add(Math.ceil(avg_sample / readIDs.size()));
+                                        tmp2 = average_sample_depth_of_bucket.get(average_sample_depth_of_bucket.size() - 1);
+                                    }
+                                    if (headers.get(2).compareToIgnoreCase("reference") == 0) {
+                                        average_reference_depth_of_bucket.add(Math.ceil(avg_reference / readIDs.size()));
+                                        tmp2 = average_reference_depth_of_bucket.get(average_reference_depth_of_bucket.size() - 1);
+                                    }
+                                    if (headers.get(2).compareToIgnoreCase("ratio") == 0) {
+                                        average_ratio_of_bucket.add(Math.ceil(avg_ratio / readIDs.size()));
+                                        tmp2 = average_ratio_of_bucket.get(average_ratio_of_bucket.size() - 1);
+                                    }
+
+
+                                    str_buf2.append(readIDs.get(0) + "\t" + (tmp1) + "\t" + tmp2 + "\n");
+
+
+                                }
+
+
+                                if (columns == 4) {
+                                    double tmp1 = -99999;
+                                    double tmp2 = -99999;
+                                    double tmp3 = -99999;
+                                    for (int i = 0; i < readIDs.size(); i++) {
+
+                                        if (headers.get(1).compareToIgnoreCase("sample") == 0) {
+                                            avg_sample += read_depth_sample.get(i);
+                                        }
+                                        if (headers.get(1).compareToIgnoreCase("reference") == 0) {
+                                            avg_reference += read_depth_reference.get(i);
+                                        }
+                                        if (headers.get(1).compareToIgnoreCase("ratio") == 0) {
+                                            avg_ratio += read_depth_ratio.get(i);
+                                        }
+
+                                        if (headers.get(2).compareToIgnoreCase("sample") == 0) {
+                                            avg_sample += read_depth_sample.get(i);
+                                        }
+                                        if (headers.get(2).compareToIgnoreCase("reference") == 0) {
+                                            avg_reference += read_depth_reference.get(i);
+                                        }
+                                        if (headers.get(2).compareToIgnoreCase("ratio") == 0) {
+                                            avg_ratio += read_depth_ratio.get(i);
+                                        }
+
+                                        if (headers.get(3).compareToIgnoreCase("sample") == 0) {
+                                            avg_sample += read_depth_sample.get(i);
+                                        }
+                                        if (headers.get(3).compareToIgnoreCase("reference") == 0) {
+                                            avg_reference += read_depth_reference.get(i);
+                                        }
+                                        if (headers.get(3).compareToIgnoreCase("ratio") == 0) {
+                                            avg_ratio += read_depth_ratio.get(i);
+                                        }
+
+                                        str_buf2.setLength(0);
+                                    }
+
+                                    if (headers.get(1).compareToIgnoreCase("sample") == 0) {
+                                        average_sample_depth_of_bucket.add(Math.ceil(avg_sample / readIDs.size()));
+                                        tmp1 = average_sample_depth_of_bucket.get(average_sample_depth_of_bucket.size() - 1);
+                                    }
+                                    if (headers.get(1).compareToIgnoreCase("reference") == 0) {
+                                        average_reference_depth_of_bucket.add(Math.ceil(avg_reference / readIDs.size()));
+                                        tmp1 = average_reference_depth_of_bucket.get(average_reference_depth_of_bucket.size() - 1);
+                                    }
+                                    if (headers.get(1).compareToIgnoreCase("ratio") == 0) {
+                                        average_ratio_of_bucket.add(Math.ceil(avg_ratio / readIDs.size()));
+                                        tmp1 = average_ratio_of_bucket.get(average_ratio_of_bucket.size() - 1);
+                                    }
+
+                                    if (headers.get(2).compareToIgnoreCase("sample") == 0) {
+                                        average_sample_depth_of_bucket.add(Math.ceil(avg_sample / readIDs.size()));
+                                        tmp2 = average_sample_depth_of_bucket.get(average_sample_depth_of_bucket.size() - 1);
+                                    }
+                                    if (headers.get(2).compareToIgnoreCase("reference") == 0) {
+                                        average_reference_depth_of_bucket.add(Math.ceil(avg_reference / readIDs.size()));
+                                        tmp2 = average_reference_depth_of_bucket.get(average_reference_depth_of_bucket.size() - 1);
+                                    }
+                                    if (headers.get(2).compareToIgnoreCase("ratio") == 0) {
+                                        average_ratio_of_bucket.add(Math.ceil(avg_ratio / readIDs.size()));
+                                        tmp2 = average_ratio_of_bucket.get(average_ratio_of_bucket.size() - 1);
+                                    }
+
+
+                                    if (headers.get(3).compareToIgnoreCase("sample") == 0) {
+                                        average_sample_depth_of_bucket.add(Math.ceil(avg_sample / readIDs.size()));
+                                        tmp3 = average_sample_depth_of_bucket.get(average_sample_depth_of_bucket.size() - 1);
+                                    }
+                                    if (headers.get(3).compareToIgnoreCase("reference") == 0) {
+                                        average_reference_depth_of_bucket.add(Math.ceil(avg_reference / readIDs.size()));
+                                        tmp3 = average_reference_depth_of_bucket.get(average_reference_depth_of_bucket.size() - 1);
+                                    }
+                                    if (headers.get(3).compareToIgnoreCase("ratio") == 0) {
+                                        average_ratio_of_bucket.add(Math.ceil(avg_ratio / readIDs.size()));
+                                        tmp3 = average_ratio_of_bucket.get(average_ratio_of_bucket.size() - 1);
+                                    }
+
+                                    str_buf2.append(readIDs.get(0) + "\t" + (tmp1) + "\t" + tmp2 + "\t" + tmp3 + "\n");
+
+
+                                }
+
+                            }
+                        }
+                    }
+                    lin++;
+                }
+                str_buf.append(str_buf2);
+                String filename2 = filename.replace(".txt", "_averages.txt");
+                //System.out.println("Created:" + filename2);
+                GenericMethods.write_file(str_buf, filename2);
+
+                file_resolution = filename2;
+                in.close();
+            } catch (Exception e) {//Catch exception if any
+                e.printStackTrace();
+            }
+        }
+    }
